@@ -14,8 +14,8 @@ $accounts = getAllAccounts();
     <meta charset="UTF-8">
     <title>Input Transaksi</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="shortcut icon" href="./img/newicon.png" type="image/x-icon">
     <style>
-        /* Salin seluruh blok <style> dari kode index.php di atas ke sini */
         :root {
             --sidebar-width: 80px; 
             --bg-dark: #2d3436;
@@ -32,10 +32,10 @@ $accounts = getAllAccounts();
         body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; margin: 0; background-color: var(--bg-dark); background-image: var(--bg-dark-gradient); color: var(--text-secondary); opacity: 1; transition: opacity var(--transition-speed) ease-out; }
         body.fade-out { opacity: 0; }
         .page-container { display: flex; height: 100vh; }
-        .main-content { flex-grow: 1; padding: 2rem; overflow-y: auto; animation: fadeIn var(--transition-speed) ease-in-out; }
+        .main-content { flex-grow: 1; padding: 2rem; overflow-y: auto; animation: fadeIn var(--transition-speed) ease-in-out; display: flex; flex-direction: column; justify-content: center; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
         
-        /* CSS Sidebar & Lainnya... (salin dari index.php) */
+        /* (CSS Sidebar & Lainnya tidak berubah) */
         .sidebar { width: var(--sidebar-width); background-color: var(--bg-element); border-right: 1px solid var(--border-color); display: flex; flex-direction: column; padding: 1rem 0; transition: transform 0.3s ease-in-out; flex-shrink: 0; }
         .sidebar-header { text-align: center; padding: 0.5rem; margin-bottom: 1.5rem; }
         .sidebar-header img { max-width: 45px; height: auto; }
@@ -59,7 +59,7 @@ $accounts = getAllAccounts();
         
         /* Styling khusus untuk halaman ini */
         .page-title { color: #ffffff; text-align: center; margin-bottom: 2rem; font-weight: 300; font-size: 2.2rem; }
-        .form-card { background-color: var(--bg-element); border: 1px solid var(--border-color); border-radius: 12px; padding: 2rem; max-width: 600px; margin: 0 auto; }
+        .form-card { background-color: var(--bg-element); border: 1px solid var(--border-color); border-radius: 12px; padding: 2rem; max-width: 600px; width: 100%; margin: 0 auto; }
         .form-group { margin-bottom: 1.5rem; }
         .form-label { display: block; margin-bottom: 0.5rem; font-weight: 600; color: var(--text-primary); }
         .form-control { width: 100%; display: block; background-color: var(--bg-dark); border: 1px solid var(--border-color); border-radius: 8px; padding: 0.75rem 1rem; box-sizing: border-box; color: var(--text-primary); font-size: 1rem; }
@@ -68,13 +68,75 @@ $accounts = getAllAccounts();
         .btn-submit { background-color: var(--accent-color); color: #fff; }
         .btn-submit:hover { opacity: 0.9; }
 
+        /* CSS BARU UNTUK KOTAK PILIHAN AKUN */
+        .account-selection-box {
+            max-height: 220px; /* Batas tinggi, akan scroll jika lebih */
+            overflow-y: auto; /* Aktifkan scroll vertikal */
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 0.5rem;
+            background-color: var(--bg-dark);
+        }
+        .account-option {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+        .account-option:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+        .account-option input[type="radio"] {
+            margin-right: 1rem;
+            /* Style radio button kustom */
+            appearance: none;
+            background-color: #fff;
+            width: 1.15em;
+            height: 1.15em;
+            border: 2px solid var(--border-color);
+            border-radius: 50%;
+            display: grid;
+            place-content: center;
+            flex-shrink: 0;
+        }
+        .account-option input[type="radio"]::before {
+            content: "";
+            width: 0.65em;
+            height: 0.65em;
+            border-radius: 50%;
+            transform: scale(0);
+            transition: 120ms transform ease-in-out;
+            box-shadow: inset 1em 1em var(--accent-color);
+        }
+        .account-option input[type="radio"]:checked::before {
+            transform: scale(1);
+        }
+        /* Style saat radio button dipilih */
+        .account-option:has(input[type="radio"]:checked) {
+            background-color: rgba(29, 161, 242, 0.15); /* Warna aksen transparan */
+            color: var(--text-primary);
+        }
+        .account-details {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+        }
+        .account-code {
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+        .account-name {
+            color: var(--text-primary);
+        }
     </style>
 </head>
 <body>
     <div class="page-container">
         <aside class="sidebar" id="sidebar">
             <div class="sidebar-header">
-                <a href="index.php"><img src="./img/icon.png" alt="Logo"></a>
+                <a href="index.php"><img src="./img/newicon.png" alt="Logo"></a>
             </div>
             <nav class="sidebar-nav">
                 <ul>
@@ -93,44 +155,72 @@ $accounts = getAllAccounts();
         <div class="overlay" id="overlay"></div>
 
         <main class="main-content">
-            <h1 class="page-title">Input Transaksi Baru</h1>
-            <div class="form-card">
-                <form method="POST" action="php/transaksi.php">
-                    <div class="form-group">
-                        <label for="date" class="form-label">Tanggal</label>
-                        <input type="date" id="date" name="date" class="form-control" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="description" class="form-label">Deskripsi</label>
-                        <input type="text" id="description" name="description" class="form-control" placeholder="Contoh: Pembelian ATK" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="type" class="form-label">Jenis</label>
-                        <select id="type" name="type" class="form-control" required>
-                            <option value="debit">Debit (Pemasukan)</option>
-                            <option value="kredit">Kredit (Pengeluaran)</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="amount" class="form-label">Jumlah</label>
-                        <input type="number" id="amount" name="amount" class="form-control" placeholder="Contoh: 50000" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="account_id" class="form-label">Akun</label>
-                        <select id="account_id" name="account_id" class="form-control" required>
-                            <?php foreach ($accounts as $acc): ?>
-                                <option value="<?= $acc['id'] ?>"><?= $acc['account_code'] ?> - <?= $acc['name'] ?></option>
-                            <?php endforeach; ?>
-                        </select>
-                    </div>
-                    <button type="submit" name="submit" class="btn-theme btn-submit">Simpan Transaksi</button>
-                </form>
+            <div class="form-wrapper">
+                <h1 class="page-title">Input Transaksi Baru</h1>
+                <div class="form-card">
+                    <form method="POST" action="php/transaksi.php">
+                        <div class="form-group">
+                            <label for="date" class="form-label">Tanggal</label>
+                            <input type="date" id="date" name="date" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="description" class="form-label">Deskripsi</label>
+                            <input type="text" id="description" name="description" class="form-control" placeholder="Contoh: Pembelian ATK" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="type" class="form-label">Jenis</label>
+                            <select id="type" name="type" class="form-control" required>
+                                <option value="debit">Debit (Pemasukan)</option>
+                                <option value="kredit">Kredit (Pengeluaran)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="amount" class="form-label">Jumlah</label>
+                            <input type="number" id="amount" name="amount" class="form-control" placeholder="Contoh: 50000" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Akun</label>
+                            <div class="account-selection-box">
+                                <?php foreach ($accounts as $acc): ?>
+                                    <label class="account-option">
+                                        <input type="radio" name="account_id" value="<?= htmlspecialchars($acc['id']) ?>" required>
+                                        <div class="account-details">
+                                            <span class="account-code"><?= htmlspecialchars($acc['account_code']) ?></span>
+                                            <span class="account-name"><?= htmlspecialchars($acc['name']) ?></span>
+                                        </div>
+                                    </label>
+                                <?php endforeach; ?>
+                            </div>
+                        </div>
+                        
+                        <button type="submit" name="submit" class="btn-theme btn-submit">Simpan Transaksi</button>
+                    </form>
+                </div>
             </div>
         </main>
     </div>
 
     <script>
-        // (Salin blok <script> dari kode index.php di atas ke sini)
+        // Script mobile sidebar dan transisi halaman tidak berubah
+        document.addEventListener('DOMContentLoaded', function () {
+            const menuToggle = document.getElementById('menu-toggle');
+            const overlay = document.getElementById('overlay');
+            if(menuToggle) { menuToggle.addEventListener('click', function () { document.body.classList.toggle('sidebar-open'); }); }
+            if(overlay) { overlay.addEventListener('click', function () { document.body.classList.remove('sidebar-open'); }); }
+        });
+        window.addEventListener('load', () => {
+            document.querySelectorAll('a').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    const href = this.getAttribute('href');
+                    if (href && (href.startsWith('/') || href.includes('.php')) && !this.hasAttribute('target')) {
+                        e.preventDefault();
+                        document.body.classList.add('fade-out');
+                        setTimeout(() => { window.location.href = href; }, 500);
+                    }
+                });
+            });
+        });
     </script>
 </body>
 </html>

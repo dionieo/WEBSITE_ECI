@@ -11,6 +11,7 @@ if (isset($_SESSION['user_id'])) {
     <meta charset="UTF-8">
     <title>Login</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="shortcut icon" href="./img/newicon.png" type="image/x-icon">
     <style>
         body {
             background-color: #2d3436; /* Warna background gelap */

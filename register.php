@@ -55,6 +55,7 @@ if (isset($_POST['register'])) {
     <meta charset="UTF-8">
     <title>Create Account</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="shortcut icon" href="./img/newicon.png" type="image/x-icon">
     <style>
         body {
             background-color: #2d3436;

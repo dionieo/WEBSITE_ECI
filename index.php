@@ -12,6 +12,7 @@ $username = isset($_SESSION['username']) ? htmlspecialchars($_SESSION['username'
     <meta charset="UTF-8">
     <title>Dashboard</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="shortcut icon" href="./img/newicon.png" type="image/x-icon">
     <style>
         :root {
             --sidebar-width: 80px; 
@@ -105,7 +106,7 @@ $username = isset($_SESSION['username']) ? htmlspecialchars($_SESSION['username'
     <div class="page-container">
         <aside class="sidebar" id="sidebar">
             <div class="sidebar-header">
-                <a href="index.php"><img src="./img/icon.png" alt="Logo"></a>
+                <a href="index.php"><img src="./img/newicon.png" alt="Logo"></a>
             </div>
             <nav class="sidebar-nav">
                 <ul>
